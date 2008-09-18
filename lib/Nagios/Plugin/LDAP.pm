@@ -11,7 +11,7 @@ use Nagios::Plugin;
 use Time::HiRes qw(time);
 use DateTime;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our $TIMEOUT = 4;
 
 
@@ -100,9 +100,6 @@ sub _add_ldap_options {
     },
     { spec => 'critical|c=f',
       help => qq|-c, --critical=DOUBLE\n  Response time to result in critical status (seconds)|,
-    },
-    { spec => 'timeout|t=i',
-      help => qq|-t, --timeout=INTEGER\n  Seconds before connection times out (default: 10)|,
     },
   );
 
