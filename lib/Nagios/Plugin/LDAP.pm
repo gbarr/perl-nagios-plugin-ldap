@@ -11,7 +11,7 @@ use Nagios::Plugin;
 use Time::HiRes qw(time);
 use DateTime;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our $TIMEOUT = 4;
 
 
@@ -252,6 +252,7 @@ sub _ldap_check_repl {
 
   my $warning  = $opts->get('repl-warning');
   my $critical = $opts->get('repl-critical');
+  my $verbose  = $opts->get('verbose');
 
   return 1 unless $warning or $critical;
 
@@ -261,11 +262,14 @@ sub _ldap_check_repl {
     $self->_ldap_do_search($src_ldap, '(&(objectClass=*)(contextCSN=*))', 'contextCSN')
     or return;
   my $dst_entry =
-    $self->_ldap_do_search($src_ldap, '(&(objectClass=*)(contextCSN=*))', 'contextCSN')
+    $self->_ldap_do_search($dst_ldap, '(&(objectClass=*)(contextCSN=*))', 'contextCSN')
     or return;
 
-  (my $src_csn = $src_entry->get_value('contextCSN')) =~ s/#.*//;
-  (my $dst_csn = $dst_entry->get_value('contextCSN')) =~ s/#.*//;
+  my $src_csn = $src_entry->get_value('contextCSN');
+  my $dst_csn = $dst_entry->get_value('contextCSN');
+
+  print "Master CSN = $src_csn\n" if $verbose;
+  print "Slave  CSN = $dst_csn\n" if $verbose;
 
   my ($YYYY, $MM, $DD, $hh, $mm, $ss);
   ($YYYY, $MM, $DD, $hh, $mm, $ss) = $src_csn =~ /^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/;
@@ -373,7 +377,7 @@ This plugin can execute with all threshold options together.
    --repl-warning=INTEGER
       Replication time delta to result in warning status (seconds)
    --repl-critical=INTEGER
-      Repl time delta to result in critical status (seconds)
+      Replication time delta to result in critical status (seconds)
    -t, --timeout=INTEGER
       Seconds before connection times out (default: 10)
    -v, --verbose
