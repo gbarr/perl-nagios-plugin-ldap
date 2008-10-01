@@ -11,7 +11,7 @@ use Nagios::Plugin;
 use Time::HiRes qw(time);
 use DateTime;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $TIMEOUT = 4;
 
 
@@ -291,7 +291,7 @@ sub _ldap_check_repl {
     second => $ss
   );
 
-  my $delta = $src_dt->subtract_datetime($dst_dt)->delta_seconds;
+  my $delta = abs($src_dt->epoch - $dst_dt->epoch);
 
   $self->add_message(
     $self->check_threshold(check => $delta, warning => $warning, critical => $critical),
