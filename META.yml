@@ -19,4 +19,4 @@ requires:
   Nagios::Plugin: 0
   Net::LDAP: 0
   Time::HiRes: 0
-version: 0.02
+version: 0.03
